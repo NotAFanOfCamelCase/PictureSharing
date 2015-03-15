@@ -3,16 +3,16 @@
 
 class Logger {
 
-	private $common, $log_path, $skip_validation, $file_reader;
+	private $common, $log_path, $skip_validation, $file_reader, $written;
 
 	private $log_levels = array('DEBUG', 'INFO', 'WARNING', 'ERROR');
 
 	function __construct($log_path, $threshhold = false, $skip_validation=false)
 	{
-		$common		= Common::getInstance();
+		$this->common		= Common::getInstance();
 
 		try {
-			( ! $this->skip_validation && $this->common->validate_directory($log_path) )
+			( ! $this->skip_validation && $this->common->validateDirectory($log_path) );
 		}
 		catch(Exception $e)
 		{
@@ -20,7 +20,9 @@ class Logger {
 		}
 
 		$this->log_path 		= $log_path;
-		$this->file_reader		= fopen($log_path, 'a');
+		$this->log_file			= realpath($log_path) . date('d-m-Y') . '.txt';
+		$this->file_reader		= fopen($this->log_file, 'a');
+		$this->threshhold		= $threshhold;
 	}
 
 	public static function getInstance($log_path, $threshhold = false, $skip_validation=false)
@@ -43,14 +45,18 @@ class Logger {
 
 	function log($level, $message)
 	{
-		$level 	= strtoupper($level);
-		$date	= date('m/d/Y h:i:s a';
+		$level 		= strtoupper($level);
+		$date		= date('m/d/Y h:i:s a');
+		$level_k	= array_search($level, $this->log_levels);
 
 		if ( ! in_array($level, $this->log_levels) )
 		{
 			throw new LoggerException("Log level '{$level}' is invalid. Use [" . implode(',', $this->log_levels) . "]" );
 		}
 
-		fwrite($this->file_reader, "[{$date}][{$level}] {$message}");
+		if ( $this->threshhold >= $level_k )
+		{
+			$this->written = fwrite($this->file_reader, "[{$date}][{$level}] {$message}");
+		}
 	}
 }

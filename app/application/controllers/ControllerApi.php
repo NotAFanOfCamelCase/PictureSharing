@@ -1,21 +1,14 @@
 <?php
 
-class API extends Ajax
+class ControllerAPI extends Rest
 {
 	function __construct()
 	{
 
 	}
 
-	public function getHelloWorld($action_route, $payload)
+	public function getTest()
 	{
-		$this->requirePayload(array('name'));
-
-		$this->response('Hello ' . $payload['name']);
-	}
-
-	public function getTriggerError($action_route, $payload)
-	{
-		$this->response('Bad Request', 400);
+		return parent::respond(array(1, 2, 3));
 	}
 }

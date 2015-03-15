@@ -1,6 +1,12 @@
 <?php
 
 
-class Portal extends Controller {
+class ControllerPortal extends Controller {
 	
+
+	public function actionTest()
+	{
+		return View::render('test', array('world' => 'world'));
+	}
+
 }

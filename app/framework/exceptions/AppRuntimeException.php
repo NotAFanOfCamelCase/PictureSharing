@@ -1,6 +1,6 @@
 <?php
 
-class AppInternalException extends Exception
+class AppRuntimeException extends Exception
 {
 	//Generic exception object
 }

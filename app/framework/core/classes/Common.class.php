@@ -8,14 +8,17 @@ class Common
 
 		if ($instance === null)
 		{
-			$instance = static;
+			$instance = new Common();
 		}
 
 		return $instance;
 	}
 
-	private function validateDirectory($user_config)
+	public function validateDirectory($user_config)
 	{
+		$perms = base_convert(fileperms($user_config), 10, 8); 
+		$perms = (int) substr($perms, (strlen($perms) - 3)); 
+
 		if ( ! file_exists($user_config) )
 		{
 			throw new Exception("Folder does not exist.");
@@ -24,9 +27,9 @@ class Common
 		{
 			throw new Exception("Path is not a directory.");
 		}
-		elseif( is_writable($user_config) )
+		elseif( $perms !== 777 )
 		{
-			throw new Exception("Folder is not writeable under the current user.")
+			throw new Exception("Folder is not writable under the current user.");
 		}
 	}
 }

@@ -2,19 +2,21 @@
 
 class Config
 {
-	private $allowed	= array('db', 'uploads', 'debug', 'salt', 'log', 'require');
+	private $allowed	= array('db', 'uploads', 'debug', 'salt', 'log');
 	private $required 	= array('db', 'uploads', 'debug', 'salt');
 	private $config 	= array();
-	private $common		= null;
+	private $common;
 
 	function __construct($extract_settings)
 	{
+		$this->common = Common::getInstance();
+
 		if ( ! is_string($extract_settings) )
 		{
 			throw new AppConfigException("Invalid configuration string. You are expected to spply the name of the function where I can get your settings");
 		}
 
-		if( ! function_exists($extract_settings) )
+		if( ! $this->loadConfigFile($extract_settings) || ! function_exists($extract_settings) )
 		{
 			throw new AppConfigException("Invalid config function. \"{$extract_settings}\" does not exist");
 		}
@@ -27,7 +29,7 @@ class Config
 		}
 
 		//check that all required config is present
-		$missing = array_diff($required, array_keys($settings));
+		$missing = array_diff($this->required, array_keys($settings));
 
 		if ( $missing )
 		{
@@ -35,13 +37,13 @@ class Config
 		}
 
 		//validate all settings
-		foreach( $allowed as $option )
+		foreach( $this->allowed as $option )
 		{
 			$v_func = 'setup_' . $option;
 
-			if ( method_exists($this, $v_func) )
+			if ( method_exists($this, $v_func) && array_key_exists($option, $settings))
 			{
-				$this->{$v_func}();
+				$this->{$v_func}($settings[$option]);
 			}
 			else
 			{
@@ -49,8 +51,32 @@ class Config
 			}
 		}
 
-		$this->common = Common::getInstance();
+	}
 
+	public static function getInstance($settings_func)
+	{
+		static $instance = null;
+
+		if ( $instance === null )
+		{
+			$instance = new Config($settings_func);
+		}
+
+		return $instance;
+	}
+
+	private function loadConfigFile($config_name)
+	{
+		$config_file = appcore\APP_ROOT . 'app/config/' . $config_name . '.php';
+
+		if ( ! file_exists($config_file) )
+		{
+			return false;
+		}
+
+		require_once $config_file;
+
+		return true;
 	}
 
 	public function getOption($option_name)
@@ -75,7 +101,7 @@ class Config
 			{
 				$this->config['require'][] = glob($file . '/*.php');
 			}
-			elseif ( file_exists($file) && pathinfo($file, PATHINFO_EXTENSION) == 'php') )
+			elseif ( file_exists($file) && pathinfo($file, PATHINFO_EXTENSION) == 'php')
 			{
 				$this->config['require'][] = $file;
 			}
@@ -87,7 +113,7 @@ class Config
 	private function setup_log($user_config)
 	{
 		try{
-			$this->common->validate_directory($user_config);
+			$this->common->validateDirectory($user_config);
 		}catch(Exception $e)
 		{
 			throw new AppConfigException("Invalid log folder. " . $e->getMessage());
@@ -100,14 +126,14 @@ class Config
 
 	private function setup_salt($user_config)
 	{
-		if ( is_string($user_config) )
+		if ( ! is_string($user_config) )
 		{
-			throw new AppConfigException("You must supply a string for to salt with. You gave me a " . get_type($user_config));
+			throw new AppConfigException("You must supply a string to salt with. You gave me a \"" . gettype($user_config) . '"');
 		}
 
 		$salt_len = strlen($user_config);
 
-		if (  < 32 )
+		if (  $salt_len < 32 )
 		{
 			throw new AppConfigException("It is required that you supply as 32 character salt. This was only {$salt_len} characters long... weeeak!");
 		}
@@ -127,7 +153,7 @@ class Config
 	private function setup_uploads($user_config)
 	{
 		try{
-			$this->common->validate_directory($user_config);
+			$this->common->validateDirectory($user_config);
 		}catch(Exception $e)
 		{
 			throw new AppConfigException("Invalid path for \"uploads\"." . $e->getMessage());

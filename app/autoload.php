@@ -1,20 +1,26 @@
 <?php
 
-define('APP_ROOT', realpath(__DIR__));
+require_once realpath(__DIR__) . '/framework/core/constants.php';
+require_once realpath(__DIR__) . '/framework/core/handler.php';
+require_once realpath(__DIR__) . '/framework/AppEngine.php';
+
 
 function controllerAutoload($controller)
 {
-	$attempt = APP_ROOT . "/app/application/controllers/Controller" . $controller '.php';
+	$controller_files	= array_map('basename', glob(appcore\APP_CONTROLLERS . '*.php'));
+	$controller_lower	= array_map('strtolower', $controller_files);
+	$controller 		= strtolower($controller);
+	$search 			= array_search($controller . '.php', $controller_lower);
 
-	if ( file_exists($attempt))
+	if ( $search !== false )
 	{
-		require_once $attempt;
+		require_once appcore\APP_CONTROLLERS . $controller_files[$search];
 	}
 }
 
 function modelAutoload($model)
 {
-	$attempt = APP_ROOT . "/app/application/models/Model" . $controller '.php';
+	$attempt = appcore\APP_MODELS . "Model" . $model . '.php';
 
 	if ( file_exists($attempt))
 	{
@@ -24,7 +30,7 @@ function modelAutoload($model)
 
 function coreAutoload($core_class)
 {
-	$attempt = APP_ROOT . "/app/framework/core/" . $core_class '.class.php';
+	$attempt = appcore\APP_ROOT . "/app/framework/core/classes/" . $core_class . '.class.php';
 
 	if ( file_exists($attempt))
 	{
@@ -34,7 +40,7 @@ function coreAutoload($core_class)
 
 function exceptionAutoload($exception)
 {
-	$attempt = APP_ROOT . "/app/framework/exceptions/" . $core_class '.php';
+	$attempt = appcore\APP_ROOT . "/app/framework/exceptions/" . $exception . '.php';
 
 	if ( file_exists($attempt))
 	{
@@ -44,4 +50,5 @@ function exceptionAutoload($exception)
 
 spl_autoload_register('coreAutoload');
 spl_autoload_register('modelAutoload');
+spl_autoload_register('exceptionAutoload');
 spl_autoload_register('controllerAutoload');

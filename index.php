@@ -2,6 +2,6 @@
 
 require_once realpath(__DIR__) . '/app/autoload.php';
 
-define(APP_CONFIG, 'myAppConfig');
+define('appcore\APP_CONFIG', 'myAppConfig');
 
-AppEngine::START($_SERVER['REQUEST_URI']);
+AppEngine::init($_SERVER)->run();
