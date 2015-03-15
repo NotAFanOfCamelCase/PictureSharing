@@ -7,10 +7,10 @@ class AppEngine {
 	private $config;
 
 
-	function __construct($PHP_SERVER)
+	function __construct($PHP_SERVER, $PHP_REQUEST)
 	{
 		$this->config 			= Config::getInstance(appcore\APP_CONFIG);
-		$this->router 			= Router::getInstance($PHP_SERVER);
+		$this->router 			= Router::getInstance($PHP_SERVER, $PHP_REQUEST);
 	}
 
 	public function run()
@@ -25,13 +25,13 @@ class AppEngine {
 		Router::respond($content['payload'], $content['code'], $content['content_type']);
 	}
 
-	public static function init($PHP_SERVER)
+	public static function init($PHP_SERVER, $PHP_REQUEST)
 	{
 		static $instance = null;
 
 		if ( $instance == null )
 		{
-			$instance = new AppEngine($PHP_SERVER);
+			$instance = new AppEngine($PHP_SERVER, $PHP_REQUEST);
 		}
 
 		return $instance;

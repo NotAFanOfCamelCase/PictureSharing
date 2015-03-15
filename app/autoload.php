@@ -1,7 +1,6 @@
 <?php
 
 require_once realpath(__DIR__) . '/framework/core/constants.php';
-require_once realpath(__DIR__) . '/framework/core/handler.php';
 require_once realpath(__DIR__) . '/framework/AppEngine.php';
 
 
@@ -48,7 +47,19 @@ function exceptionAutoload($exception)
 	}
 }
 
+function libAutoload($lib)
+{
+	$attempt = appcore\APP_ROOT . "/app/framework/core/lib/" . $lib . '.php';
+
+	if ( file_exists($attempt))
+	{
+		require_once $attempt;
+	}
+}
+
+spl_autoload_register('libAutoload');
 spl_autoload_register('coreAutoload');
 spl_autoload_register('modelAutoload');
 spl_autoload_register('exceptionAutoload');
 spl_autoload_register('controllerAutoload');
+require_once realpath(__DIR__) . '/framework/core/handler.php'; //Load error handler

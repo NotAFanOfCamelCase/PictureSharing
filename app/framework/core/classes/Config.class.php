@@ -2,8 +2,8 @@
 
 class Config
 {
-	private $allowed	= array('db', 'uploads', 'debug', 'salt', 'log');
-	private $required 	= array('db', 'uploads', 'debug', 'salt');
+	private $allowed	= array('db', 'uploads', 'debug', 'salt', 'log', 'app_name', 'error_controller', 'error_action');
+	private $required 	= array('db', 'uploads', 'debug', 'salt', 'error_controller', 'error_action');
 	private $config 	= array();
 	private $common;
 
@@ -65,6 +65,26 @@ class Config
 		return $instance;
 	}
 
+	private function set_up_error_action($config_name)
+	{
+		if (method_exists('controller' . $this->config['error_controller'], 'action' . $config_name))
+		{
+			return true;
+		}
+
+		throw new UnreachableErrorPageException("There is no action \"{$config_name}\" in controller {$this->config['error_controller']}");
+	}
+
+	private function set_up_error_controller($config_name)
+	{
+		if (class_exists('controller' . $config_name))
+		{
+			return true;
+		}
+
+		throw new UnreachableErrorPageException("The error controller {$config_name} was not found.");
+	}
+
 	private function loadConfigFile($config_name)
 	{
 		$config_file = appcore\APP_ROOT . 'app/config/' . $config_name . '.php';
@@ -87,6 +107,13 @@ class Config
 		}
 
 		return false;
+	}
+
+	private function setup_app_name($user_config)
+	{
+		$this->config['app_name'] = $user_config;
+
+		return true;
 	}
 
 	private function setup_require(array $user_config)

@@ -2,13 +2,18 @@
 
 class Database {
 
-	private $pdo;
+	private $pdo, $config;
 	private $options = array();
 
-	function __constructor($host, $user, $password, $databse)
+	function __constructor()
 	{
+		$this->config 	= Config::getInstance(appcore\APP_CONFIG);
+
 		try {
-			$this->pdo = new PDO("mysql:host={$host};dbname={$databse};", $user, $password, $this->options);
+			$this->pdo = new PDO("mysql:host={$this->config->getOption('db')['host']};dbname={$this->config->getOption('db')['database']};", 
+									$this->config->getOption('db')['username'],
+									$this->config->getOption('db')['password'],
+									$this->options);
 		}catch(Exception $e){
 			throw new AppDatabaseException($e->getMessage());
 		}
@@ -19,13 +24,13 @@ class Database {
 		return $this->pdo;
 	}
 
-	public static function getInstance($host, $user, $password, $database)
+	public static function getInstance()
 	{
 		static $instance = null;
 
 		if ( $instance == null )
 		{
-			$instance = new Database($host, $user, $password, $database);
+			$instance = new Database();
 		}
 
 		return $instance;

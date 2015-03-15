@@ -1,7 +1,5 @@
 <?php
-
+define('appcore\APP_CONFIG', 'myAppConfig');
 require_once realpath(__DIR__) . '/app/autoload.php';
 
-define('appcore\APP_CONFIG', 'myAppConfig');
-
-AppEngine::init($_SERVER)->run();
+AppEngine::init($_SERVER, $_REQUEST)->run();
