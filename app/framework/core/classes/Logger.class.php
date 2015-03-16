@@ -7,6 +7,8 @@ class Logger {
 
 	private $log_levels = array('DEBUG', 'INFO', 'WARNING', 'ERROR');
 
+	private $dateFormat = 'Y-m-d G:i:s.u';
+
 	function __construct($log_path, $threshhold = false, $skip_validation=false)
 	{
 		$this->common		= Common::getInstance();
@@ -30,10 +32,10 @@ class Logger {
 		}
 		elseif ( $this->config->getOption('debug') )
 		{
-			$this->threshhold		= 1;
+			$this->threshhold		= 0;
 		}
 		else{
-			$this->threshhold		= 0;
+			$this->threshhold		= 1;
 		}
 	}
 
@@ -66,9 +68,9 @@ class Logger {
 			throw new LoggerException("Log level '{$level}' is invalid. Use [" . implode(',', $this->log_levels) . "]" );
 		}
 
-		if ( $this->threshhold >= $level_k )
+		if ( $level_k >= $this->threshhold )
 		{
-			$this->written = fwrite($this->file_reader, "[{$this->getTimestamp}] [{$level}] {$message}\n");
+			$this->written = fwrite($this->file_reader, "[{$this->getTimestamp()}] [{$level}] {$message}\n");
 		}
 
 		if ( $this->written === false )

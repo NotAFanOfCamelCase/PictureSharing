@@ -2,14 +2,14 @@
 
 class Config
 {
-	private $allowed	= array('db', 'uploads', 'debug', 'salt', 'log', 'app_name', 'error_controller', 'error_action');
-	private $required 	= array('db', 'uploads', 'debug', 'salt', 'error_controller', 'error_action');
+	private $allowed	= array('db', 'uploads', 'debug', 'log', 'app_name', 'error_controller', 'error_action', 'default_controller', 'default_action');
+	private $required 	= array('db', 'uploads', 'debug', 'error_controller', 'app_name', 'error_action', 'default_controller', 'default_action');
 	private $config 	= array();
 	private $common;
 
 	function __construct($extract_settings)
 	{
-		$this->common = Common::getInstance();
+		$this->common 	= Common::getInstance();
 
 		if ( ! is_string($extract_settings) )
 		{
@@ -41,9 +41,16 @@ class Config
 		{
 			$v_func = 'setup_' . $option;
 
-			if ( method_exists($this, $v_func) && array_key_exists($option, $settings))
+			if ( array_key_exists($option, $settings))
 			{
-				$this->{$v_func}($settings[$option]);
+				if ( method_exists($this, $v_func) )
+				{
+					$this->{$v_func}($settings[$option]);
+				}
+				else
+				{
+					$this->config[$option] = $setting[$option];
+				}
 			}
 			else
 			{
@@ -65,24 +72,48 @@ class Config
 		return $instance;
 	}
 
-	private function set_up_error_action($config_name)
+	private function setup_default_action($config_name)
 	{
 		if (method_exists('controller' . $this->config['error_controller'], 'action' . $config_name))
 		{
+			$this->config['default_action'] = $config_name;
 			return true;
 		}
 
-		throw new UnreachableErrorPageException("There is no action \"{$config_name}\" in controller {$this->config['error_controller']}");
+		throw new AppRuntimeException("There is no action \"{$config_name}\" in controller {$this->config['error_controller']}");
 	}
 
-	private function set_up_error_controller($config_name)
+	private function setup_default_controller($config_name)
 	{
 		if (class_exists('controller' . $config_name))
 		{
+			$this->config['default_controller'] = $config_name;
 			return true;
 		}
 
-		throw new UnreachableErrorPageException("The error controller {$config_name} was not found.");
+		throw new AppRuntimeException("The error controller {$config_name} was not found.");
+	}
+
+	private function setup_error_action($config_name)
+	{
+		if (method_exists('controller' . $this->config['error_controller'], 'action' . $config_name))
+		{
+			$this->config['error_action'] = $config_name;
+			return true;
+		}
+
+		throw new AppRuntimeException("There is no action \"{$config_name}\" in controller {$this->config['error_controller']}");
+	}
+
+	private function setup_error_controller($config_name)
+	{
+		if (class_exists('controller' . $config_name))
+		{
+			$this->config['error_controller'] = $config_name;
+			return true;
+		}
+
+		throw new AppRuntimeException("The error controller {$config_name} was not found.");
 	}
 
 	private function loadConfigFile($config_name)

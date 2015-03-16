@@ -10,6 +10,7 @@ class Router {
 		$this->request_info						= $PHP_SERVER;
 		$this->request_data['HTTP']				= array();
 		$this->request_data['PAYLOAD']			= $PHP_REQUEST;
+		$this->config 							= Config::getInstance(appcore\APP_CONFIG);
 
 		//Explode by slashes, filter blank string subsets, rebase array keys to account for unset blank subsets
 		$this->request_data['HTTP']['URL_PATH'] = array_values(array_filter(explode('/', strtok($this->request_info['REQUEST_URI'], '?')), function($val){ return strlen($val); }));
@@ -35,8 +36,23 @@ class Router {
 		return $instance;
 	}
 
+	public function getRouteData()
+	{
+		return $this->request_data['HTTP']['URL_PATH'];
+	}
+
 	private function determineRoute()
 	{
+		//Check if default
+		if ( ! array_key_exists(0, $this->request_data['HTTP']['URL_PATH']) || ! (is_string($this->request_data['HTTP']['URL_PATH']) && strlen ($this->request_data['HTTP']['URL_PATH'])) )
+		{
+			//Do default controller and action
+			$this->controller 	= 'controller' . $this->config->getOption('default_controller');
+			$this->action 		= 'action' . $this->config->getOption('default_action');
+
+			return;
+		}
+
 		$assumed_class	= 'controller' . strtolower($this->request_data['HTTP']['URL_PATH'][0]);
 		$path_exists 	= in_array($assumed_class . '.php', array_map('basename', array_map('strtolower', glob(appcore\APP_CONTROLLERS . '*.php'))));
 		$c 	= new ControllerPortal();

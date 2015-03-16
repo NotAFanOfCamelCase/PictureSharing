@@ -1,11 +1,11 @@
 <?php
 
-class Database {
+class PDOFactory {
 
 	private $pdo, $config;
 	private $options = array();
 
-	function __constructor()
+	function __construct()
 	{
 		$this->config 	= Config::getInstance(appcore\APP_CONFIG);
 
@@ -30,9 +30,9 @@ class Database {
 
 		if ( $instance == null )
 		{
-			$instance = new Database();
+			$instance = new PDOFactory();
 		}
 
-		return $instance;
+		return $instance();
 	}
 }

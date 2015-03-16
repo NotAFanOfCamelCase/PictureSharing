@@ -6,16 +6,17 @@ function myAppConfig()
 					'debug'				=>	true,
 					'it_email'			=>	'granados.carlos91@gmail.com',
 					'app_name'			=>	'PhotoShare',
-					'error_controller'	=>	'error',
-					'error_action'		=>	'error',
+					'error_controller'	=>	'portal',
+					'error_action'		=>	'hard',
+					'default_controller'=>	'portal',
+					'default_action'	=>	'test',
 					'db'				=>	array(
-													'host'			=> 	'db1.launch3.net',
-													'username'		=>	'l3t_user',
-													'password'		=>	'4zgePHV3F55QdV2FLp',
-													'database'		=>	'launch3_yii'
+													'host'			=> 	'',
+													'username'		=>	'',
+													'password'		=>	'',
+													'database'		=>	''
 											),
 					'log'				=>	realpath(__DIR__ . '/../logs/application/'),
-					'uploads'			=>	realpath(__DIR__ . '/../uploads/'),
-					'salt'				=>	'eW0@V@we(Rw.Jbg`FH_*o|R/_B/j8vQcW~%0,d1ye".m`&>_XNI!wzk_-bp!Cko'
+					'uploads'			=>	realpath(__DIR__ . '/../uploads/')
 				);
 }

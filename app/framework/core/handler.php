@@ -38,9 +38,14 @@ class ExceptionHandler {
 	function handle($exception)
 	{
 		$type	= get_class($exception);
-		$this->logger->log('error', "{$type}: {$exception->getMessage()}");
-
-		echo $type;
+		try {
+			$this->logger->log('error', "{$type}: {$exception->getMessage()}");
+		}
+		catch(UnwritableLoggerExcetion $e)
+		{
+			//We gotta catch this thing or else the exception handler will keep on being called
+			//and keep failing
+		}
 
 		if ( array_key_exists($type, $this->handlers) )
 		{

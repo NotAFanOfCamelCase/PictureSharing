@@ -1,0 +1,4 @@
+[2015-03-16 9:17:04.792859] [ERROR] UnreachableRouteException: Controller controllerfavicon.ico does not exist
+[2015-03-16 10:13:12.067778] [ERROR] UnreachableRouteException: Controller controllerfavicon.ico does not exist
+[2015-03-16 10:14:23.228807] [ERROR] UnreachableRouteException: Controller controllerfavicon.ico does not exist
+[2015-03-16 10:24:23.937197] [ERROR] UnreachableRouteException: Controller controllerfavicon.ico does not exist
