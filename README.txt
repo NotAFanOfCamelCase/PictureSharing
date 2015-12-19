@@ -2,12 +2,7 @@ Porgramming Challenge by Carlos Granados <granados.carlos91@gmail.com>
 
 Frontend Libraries Used:
 
-* All coded from scratch, no recycled code used for this project. Framework designed on the fly.
-
-								You may test run the app here:
-										http://pixafy.carlosngranados.com/ (Login with user: admin, password: pws^&*!123 )
-
-								Or follow the steps below to do a fresh installation.
+Old project made in 2 days for a job interview.
 
 Dependencies:
 	PDO Enabled
