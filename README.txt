@@ -1,6 +1,3 @@
-Porgramming Challenge by Carlos Granados <granados.carlos91@gmail.com>
-
-Frontend Libraries Used:
 
 Old project made in 2 days for a job interview.
 
