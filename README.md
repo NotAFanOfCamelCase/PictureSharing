@@ -1,18 +1,15 @@
+# Challenge Project 2015
+Challenge: Build a photo sharing site in PHP without using a Framework. This was built for a job interview a few years ago.
 
-Old project made in 2 days for a job interview.
-
-Dependencies:
+## Dependencies:
 	PDO Enabled
 	GD (Image Manipulation)
 
-Configure
+## Configure
 	Open app/config/myAppConfig.php and set your database settings, you don't need to touch anything else.
 	User should have all privileges
-
-Install:
-	Run app/install.php from command line and follow the steps.
-
-Flow of things:
+	
+### Flow of things:
 	- App Engine Starts
 		* Configuration is read
 		* User required files checked for syntax and loaded into the environment
@@ -24,5 +21,3 @@ Flow of things:
 		* Append layout files
 		* Render page
 		* Bye bye :)
-
-tcQSYf3o%#E57sm
